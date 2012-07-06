@@ -36,6 +36,13 @@ parseAtom = do first <- letter <|> symbol
                           "#f" -> Bool False
                           _    -> Atom atom
 
+parseExpr :: Parser LispVal
+parseExpr = parseAtom <|> parseString <|> parseNumber
+
+readExpr :: String -> String
+readExpr input = case parse parseExpr "lisp" input of
+  Left err -> "No match: " ++ show err
+  Right _  -> "Found value"
 
 parseNumber :: Parser LispVal
 parseNumber = liftM (Number . read) $ many 1 digit
